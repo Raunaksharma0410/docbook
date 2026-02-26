@@ -1,0 +1,36 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Login - DocBook{% endblock %}
+
+{% block content %}
+<section class="auth container">
+  <div class="auth-card">
+    <h2>Login</h2>
+
+    <form id="login-form" method="POST" action="/api/token/">
+      <label for="username">Username or Email</label>
+      <input id="username" type="text" required placeholder="Enter your username or email">
+
+      <label for="password">Password</label>
+      <input id="password" type="password" required placeholder="Enter your password">
+
+      <button class="btn btn-primary" type="submit">Login</button>
+    </form>
+
+    <p style="text-align:center; margin-top:10px;">
+      New here? <a href="/signup/">Create an account</a>
+    </p>
+
+    <div id="login-feedback" class="muted"></div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const el = document.getElementById('username');
+    if (el) el.focus();
+  });
+</script>
+{% endblock %}

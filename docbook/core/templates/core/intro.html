@@ -1,0 +1,81 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="hero container">
+  <div class="hero-left">
+    <h1>Professional Family Health Care</h1>
+    <p class="lead">Book your medical appointments using DocBook — fast, secure and easy to manage.</p>
+
+    <div class="hero-icons">
+      <div class="hi">❤</div>
+      <div class="hi">🏥</div>
+      <div class="hi">🩺</div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>1-800-600-380</h3>
+        <p class="muted">Emergency Service</p>
+        <p>Hey everyone this is our website where we can book appointments with your doctors. </p>
+        <button class="btn">See More</button>
+      </div>
+
+      <div class="card">
+        <h3>Book Appointment</h3>
+        <p class="muted">Do you want to make an appointment?</p>
+        <p>For booking appointment click below.</p>
+        <a href="/doctors/" class="btn">Book Now</a>
+      </div>
+
+      <div class="card">
+        <h3>Opening Hours</h3>
+        <p class="muted">Mon - Fri</p>
+        <p>Sat - Sun</p>
+        <button class="btn">Contact Us</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <img src="{% static 'core/img/logo.png' %}" alt="doctor" class="hero-img">
+  </div>
+</section>
+
+<section class="doctors container">
+  <h2>Available Doctors</h2>
+  <div id="doctors-list" class="doctors-grid"></div>
+</section>
+
+<!-- ===================================================== -->
+<!-- ✅ FIXED COMPLETE BOOKING MODAL FOR INTRO PAGE -->
+<!-- ===================================================== -->
+<div id="booking-modal" class="modal hidden">
+  <div class="modal-content">
+    <button id="modal-close" class="modal-close">✕</button>
+
+    <h3>Book Appointment</h3>
+
+    <form id="booking-form">
+
+      <!-- 🔥 THIS WAS MISSING — NOW ADDED -->
+      <input type="hidden" id="doctor-id-hidden">
+
+      <label>Doctor</label>
+      <select id="doctor-select" required></select>
+
+      <label>Date</label>
+      <input type="date" id="appt-date" required>
+
+      <label>Time</label>
+      <input type="time" id="appt-time" required>
+
+      <button type="submit" class="btn btn-primary">Book</button>
+    </form>
+
+    <div id="booking-feedback"></div>
+  </div>
+</div>
+
+{% endblock %}

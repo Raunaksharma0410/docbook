@@ -1,0 +1,33 @@
+{% extends 'core/base.html' %}
+{% block title %}Signup - DocBook{% endblock %}
+
+{% block content %}
+<section class="auth container">
+  <div class="auth-card">
+    <h2>Create Account</h2>
+
+    <!-- JS handles submission, no action attribute -->
+    <form id="signup-form">
+      <label for="su-username">Username</label>
+      <input type="text" id="su-username" required autocomplete="username">
+
+      <label for="su-email">Email</label>
+      <input type="email" id="su-email" required autocomplete="email">
+
+      <label for="su-password">Password</label>
+      <input type="password" id="su-password" required autocomplete="new-password">
+
+      <label for="role">Role</label>
+      <select id="role" required>
+        <option value="patient" selected>Patient</option>
+        <option value="doctor">Doctor</option>
+      </select>
+
+      <button class="btn btn-primary" type="submit">Sign Up</button>
+    </form>
+
+    <p>Already have an account? <a href="/login/">Login</a></p>
+    <div id="signup-feedback" class="muted"></div>
+  </div>
+</section>
+{% endblock %}

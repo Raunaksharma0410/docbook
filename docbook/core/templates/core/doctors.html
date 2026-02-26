@@ -1,0 +1,50 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Doctors - DocBook{% endblock %}
+
+{% block content %}
+
+<section class="container">
+  <h1>All Doctors</h1>
+
+  <div class="filter-row">
+    <input id="search-doctor" placeholder="Search by name or specialization">
+    <select id="filter-special">
+      <option value="">All Specializations</option>
+    </select>
+  </div>
+
+  <div id="doctors-list-full" class="doctors-grid"></div>
+</section>
+
+<!-- ✅ Booking Modal -->
+<!-- ✅ Booking Modal -->
+<div id="booking-modal" class="modal hidden">
+  <div class="modal-content">
+    <button id="modal-close" class="modal-close">✕</button>
+
+    <h3>Book Appointment</h3>
+
+    <form id="booking-form">
+
+      <!-- 🔥 Hidden doctor ID (REAL VALUE SENT TO BACKEND) -->
+      <input type="hidden" id="doctor-id-hidden">
+
+      <label>Doctor</label>
+      <select id="doctor-select" required></select>
+
+      <label>Date</label>
+      <input type="date" id="appt-date" required>
+
+      <label>Time</label>
+      <input type="time" id="appt-time" required>
+
+      <button class="btn btn-primary" type="submit">Book</button>
+    </form>
+
+    <div id="booking-feedback"></div>
+  </div>
+</div>
+
+
+{% endblock %}

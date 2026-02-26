@@ -1,0 +1,72 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}DocBook{% endblock %}</title>
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="container nav">
+
+    <div class="brand">
+      <img src="{% static 'core/img/logo.png' %}" alt="logo" class="logo">
+      <span class="brand-text">DocBook</span>
+    </div>
+
+    <nav>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/doctors/">Doctors</a></li>
+        <li><a href="/appointments/">Appointments</a></li>
+
+        <!-- ✅ Username shown only when logged in -->
+        <li>
+          <span id="nav-username" class="muted" style="display:none;"></span>
+        </li>
+
+        <!-- ✅ Login & Logout toggle using JS -->
+        <li>
+          <a href="/login/" id="nav-login-link">Login</a>
+        </li>
+        <li>
+          <a href="javascript:void(0)" id="nav-logout-link"
+             style="display:none;" onclick="logout()">
+            Logout
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <button id="mobile-menu-btn" class="mobile-menu-btn">☰</button>
+  </div>
+</header>
+
+<main>
+  {% block content %}
+  {% endblock %}
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; {{ now|date:"Y" }} DocBook — Built with ❤️</p>
+  </div>
+</footer>
+
+<!-- Global API Base -->
+<script>const API_BASE = '';</script>
+
+<!-- Main JS -->
+<script src="{% static 'core/js/main.js' %}"></script>
+
+{% block extra_js %}
+{% endblock %}
+
+</body>
+</html>
