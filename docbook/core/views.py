@@ -1,15 +1,20 @@
+# Django utilities
 from django.shortcuts import render, get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.hashers import make_password
+
+# Django REST Framework API tools
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from django.contrib.auth.hashers import make_password
-from django.views.decorators.csrf import csrf_exempt
 
+# JWT authentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+# Project models and serializers
 from .models import DoctorProfile, Appointment, User
 from .serializers import DoctorProfileSerializer, AppointmentSerializer
-
 
 # ------------------------------------------------------
 # PAGE RENDERING
