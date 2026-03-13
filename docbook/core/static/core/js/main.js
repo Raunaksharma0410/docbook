@@ -1,5 +1,7 @@
 console.log("🔥 MAIN.JS LOADED");
 
+let allDoctors = [];
+
 // ------------------ Helpers ------------------
 const qs = (id) => document.getElementById(id);
 
@@ -30,7 +32,7 @@ qs("login-form")?.addEventListener("submit", async (e) => {
     localStorage.setItem("access", data.access);
     localStorage.setItem("username", username);
     updateNavUser();
-    window.location.href = "/ ";
+    window.location.href = "/";
   } else {
     qs("login-feedback").innerText = "❌ Invalid username or password";
   }
@@ -59,7 +61,6 @@ qs("signup-form")?.addEventListener("submit", async (e) => {
     return;
   }
 
-  // auto login
   const loginRes = await fetch("/api/token/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -120,20 +121,54 @@ async function loadDoctors(listId = "doctors-list", dropdownId = "doctor-select"
   if (!container) return;
 
   const res = await fetch("/api/doctors/");
-  const doctors = await res.json();
+  allDoctors = await res.json();
+
+  populateSpecializations(allDoctors);
+  renderDoctors(allDoctors, listId);
+
+  const dropdown = qs(dropdownId);
+  if (dropdown) {
+    dropdown.innerHTML = "";
+
+    allDoctors.forEach((doc) => {
+      const opt = document.createElement("option");
+      opt.value = doc.user.id;
+      opt.innerText = `Dr. ${doc.user.username} (${doc.specialization})`;
+      dropdown.appendChild(opt);
+    });
+  }
+}
+
+// =====================================================
+// RENDER DOCTORS
+// =====================================================
+function renderDoctors(doctors, listId) {
+
+  const container = qs(listId);
+  if (!container) return;
 
   container.innerHTML = "";
-  const dropdown = qs(dropdownId);
-  if (dropdown) dropdown.innerHTML = "";
 
   doctors.forEach((doc) => {
+
     const card = document.createElement("div");
     card.className = "doctor-card";
 
     card.innerHTML = `
       <img src="/static/core/img/doctor-avatar.png" class="doc-img">
+
       <h3>Dr. ${doc.user.username}</h3>
-      <p class="muted">${doc.specialization}</p>
+
+      <p class="muted">Specialization: ${doc.specialization}</p>
+
+      <p class="muted">Experience: ${doc.experience_years} years</p>
+
+      <p class="muted">
+        🕒 Available: ${doc.available_from.slice(0,5)} - ${doc.available_to.slice(0,5)}
+      </p>
+
+      ${doc.bio ? `<p class="muted">${doc.bio}</p>` : ""}
+
       ${
         token()
           ? `<button class="btn open-booking" data-id="${doc.user.id}">Book Appointment</button>`
@@ -143,19 +178,70 @@ async function loadDoctors(listId = "doctors-list", dropdownId = "doctor-select"
 
     container.appendChild(card);
 
-    if (dropdown) {
-      const opt = document.createElement("option");
-      opt.value = doc.user.id;
-      opt.innerText = `Dr. ${doc.user.username} (${doc.specialization})`;
-      dropdown.appendChild(opt);
-    }
   });
 
   activateBookingButtons();
 }
 
 // =====================================================
-// BOOKING MODAL (ONE CLEAN VERSION)
+// POPULATE SPECIALIZATION DROPDOWN
+// =====================================================
+function populateSpecializations(doctors) {
+
+  const select = qs("filter-special");
+  if (!select) return;
+
+  const specs = [...new Set(doctors.map(d => d.specialization))];
+
+  select.innerHTML = `<option value="">All Specializations</option>`;
+
+  specs.forEach(spec => {
+
+    const option = document.createElement("option");
+    option.value = spec.toLowerCase();
+    option.textContent = spec;
+
+    select.appendChild(option);
+
+  });
+
+}
+
+// =====================================================
+// SEARCH + FILTER
+// =====================================================
+const searchInput = qs("search-doctor");
+const specializationFilter = qs("filter-special");
+
+function applyFilters() {
+
+  let filtered = [...allDoctors];
+
+  const searchValue = searchInput?.value.toLowerCase() || "";
+  const specValue = specializationFilter?.value.toLowerCase() || "";
+
+  if (searchValue) {
+    filtered = filtered.filter(doc =>
+      doc.user.username.toLowerCase().includes(searchValue) ||
+      doc.specialization.toLowerCase().includes(searchValue)
+    );
+  }
+
+  if (specValue) {
+    filtered = filtered.filter(doc =>
+      doc.specialization.toLowerCase() === specValue
+    );
+  }
+
+  renderDoctors(filtered, "doctors-list-full");
+
+}
+
+searchInput?.addEventListener("input", applyFilters);
+specializationFilter?.addEventListener("change", applyFilters);
+
+// =====================================================
+// BOOKING MODAL
 // =====================================================
 const modal = qs("booking-modal");
 const modalClose = qs("modal-close");
@@ -167,7 +253,6 @@ function activateBookingButtons() {
       if (!token()) return (window.location.href = "/login/");
       modal.classList.remove("hidden");
 
-      // set correct doctor
       qs("doctor-id-hidden").value = btn.dataset.id;
       qs("doctor-select").value = btn.dataset.id;
       qs("booking-feedback").innerText = "";
@@ -196,7 +281,6 @@ bookingForm?.addEventListener("submit", async (e) => {
     return;
   }
 
-  // Convert DD-MM-YYYY → YYYY-MM-DD
   if (/^\d{2}-\d{2}-\d{4}$/.test(date)) {
     const [dd, mm, yyyy] = date.split("-");
     date = `${yyyy}-${mm}-${dd}`;
@@ -226,6 +310,7 @@ bookingForm?.addEventListener("submit", async (e) => {
 // APPOINTMENTS LIST
 // =====================================================
 async function loadAppointments() {
+
   const container = qs("appointments-list");
   if (!container) return;
 
@@ -242,6 +327,7 @@ async function loadAppointments() {
   container.innerHTML = "";
 
   appointments.forEach((ap) => {
+
     const card = document.createElement("div");
     card.className = "doctor-card";
 
@@ -258,15 +344,19 @@ async function loadAppointments() {
     `;
 
     container.appendChild(card);
+
   });
 }
 
 window.cancelAppt = async (id) => {
+
   await fetch(`/api/appointments/${id}/cancel/`, {
     method: "POST",
     headers: authHeader(),
   });
+
   location.reload();
+
 };
 
 // =====================================================
