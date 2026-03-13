@@ -6,8 +6,9 @@
   <div class="auth-card">
     <h2>Create Account</h2>
 
-    <!-- JS handles submission, no action attribute -->
+    <!-- JS handles submission -->
     <form id="signup-form">
+
       <label for="su-username">Username</label>
       <input type="text" id="su-username" required autocomplete="username">
 
@@ -17,17 +18,17 @@
       <label for="su-password">Password</label>
       <input type="password" id="su-password" required autocomplete="new-password">
 
-      <label for="role">Role</label>
-      <select id="role" required>
-        <option value="patient" selected>Patient</option>
-        <option value="doctor">Doctor</option>
-      </select>
+      <!-- Role hidden (always patient) -->
+      <input type="hidden" id="role" value="patient">
 
       <button class="btn btn-primary" type="submit">Sign Up</button>
+
     </form>
 
     <p>Already have an account? <a href="/login/">Login</a></p>
+
     <div id="signup-feedback" class="muted"></div>
+
   </div>
 </section>
 {% endblock %}

@@ -95,13 +95,12 @@ def cancel_appointment(request, appointment_id):
 # ------------------------------------------------------
 @csrf_exempt
 @api_view(['POST'])
-@permission_classes([])   # Anyone can register
+@permission_classes([])
 def register(request):
 
     username = request.data.get("username")
     email = request.data.get("email")
     password = request.data.get("password")
-    role = request.data.get("role", "patient")
 
     if not username or not password:
         return Response({"error": "Username and password are required"}, status=400)
@@ -113,18 +112,9 @@ def register(request):
         username=username,
         email=email,
         password=make_password(password),
-        is_patient=(role == "patient"),
-        is_doctor=(role == "doctor"),
+        is_patient=True,
+        is_doctor=False,
     )
-
-    # Auto-create doctor profile
-    if user.is_doctor:
-        DoctorProfile.objects.create(
-            user=user,
-            specialization="General",
-            available_from="09:00",
-            available_to="17:00"
-        )
 
     return Response({"message": "Account created successfully"}, status=201)
 

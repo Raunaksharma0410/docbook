@@ -155,7 +155,7 @@ function renderDoctors(doctors, listId) {
     card.className = "doctor-card";
 
     card.innerHTML = `
-      <img src="/static/core/img/doctor-avatar.png" class="doc-img">
+      <img src="/static/core/img/doctorprofile.png" class="doc-img">
 
       <h3>Dr. ${doc.user.username}</h3>
 
