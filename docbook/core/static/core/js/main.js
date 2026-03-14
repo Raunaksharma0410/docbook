@@ -5,6 +5,19 @@ let allDoctors = [];
 // ------------------ Helpers ------------------
 const qs = (id) => document.getElementById(id);
 
+const mobileMenuBtn = qs("mobile-menu-btn");
+const navLinks = document.querySelector(".nav-links");
+
+mobileMenuBtn?.addEventListener("click", () => {
+  navLinks?.classList.toggle("show");
+});
+
+document.querySelectorAll(".nav-links a").forEach((link) => {
+  link.addEventListener("click", () => {
+    navLinks?.classList.remove("show");
+  });
+});
+
 const token = () => localStorage.getItem("access");
 const authHeader = () => {
   const t = token();
@@ -47,7 +60,8 @@ qs("signup-form")?.addEventListener("submit", async (e) => {
   const username = qs("su-username").value;
   const email = qs("su-email").value;
   const password = qs("su-password").value;
-  const role = qs("role").value;
+  const roleField = qs("role");
+  const role = roleField ? roleField.value : "patient";
 
   const res = await fetch("/api/register/", {
     method: "POST",
@@ -143,14 +157,12 @@ async function loadDoctors(listId = "doctors-list", dropdownId = "doctor-select"
 // RENDER DOCTORS
 // =====================================================
 function renderDoctors(doctors, listId) {
-
   const container = qs(listId);
   if (!container) return;
 
   container.innerHTML = "";
 
   doctors.forEach((doc) => {
-
     const card = document.createElement("div");
     card.className = "doctor-card";
 
@@ -177,7 +189,6 @@ function renderDoctors(doctors, listId) {
     `;
 
     container.appendChild(card);
-
   });
 
   activateBookingButtons();
@@ -187,7 +198,6 @@ function renderDoctors(doctors, listId) {
 // POPULATE SPECIALIZATION DROPDOWN
 // =====================================================
 function populateSpecializations(doctors) {
-
   const select = qs("filter-special");
   if (!select) return;
 
@@ -196,15 +206,11 @@ function populateSpecializations(doctors) {
   select.innerHTML = `<option value="">All Specializations</option>`;
 
   specs.forEach(spec => {
-
     const option = document.createElement("option");
     option.value = spec.toLowerCase();
     option.textContent = spec;
-
     select.appendChild(option);
-
   });
-
 }
 
 // =====================================================
@@ -214,7 +220,6 @@ const searchInput = qs("search-doctor");
 const specializationFilter = qs("filter-special");
 
 function applyFilters() {
-
   let filtered = [...allDoctors];
 
   const searchValue = searchInput?.value.toLowerCase() || "";
@@ -234,7 +239,6 @@ function applyFilters() {
   }
 
   renderDoctors(filtered, "doctors-list-full");
-
 }
 
 searchInput?.addEventListener("input", applyFilters);
@@ -310,7 +314,6 @@ bookingForm?.addEventListener("submit", async (e) => {
 // APPOINTMENTS LIST
 // =====================================================
 async function loadAppointments() {
-
   const container = qs("appointments-list");
   if (!container) return;
 
@@ -327,7 +330,6 @@ async function loadAppointments() {
   container.innerHTML = "";
 
   appointments.forEach((ap) => {
-
     const card = document.createElement("div");
     card.className = "doctor-card";
 
@@ -344,19 +346,16 @@ async function loadAppointments() {
     `;
 
     container.appendChild(card);
-
   });
 }
 
 window.cancelAppt = async (id) => {
-
   await fetch(`/api/appointments/${id}/cancel/`, {
     method: "POST",
     headers: authHeader(),
   });
 
   location.reload();
-
 };
 
 // =====================================================
