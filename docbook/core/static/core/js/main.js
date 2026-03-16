@@ -344,6 +344,9 @@ async function loadAppointments() {
     if (ap.status === "pending") {
       statusHtml = `<p class="muted">Status: Pending</p>`;
       actionHtml = `<button class="btn cancel" onclick="cancelAppt(${ap.id})">Cancel</button>`;
+    } else if (ap.status === "confirmed") {
+      statusHtml = `<p class="muted">Status: Confirmed</p>`;
+      actionHtml = `<button class="btn cancel" onclick="cancelAppt(${ap.id})">Cancel</button>`;
     } else if (ap.status === "completed") {
       statusHtml = `<p class="muted">Status: Completed</p>`;
     } else if (ap.status === "cancelled") {
