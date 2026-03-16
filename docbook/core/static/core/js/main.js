@@ -176,7 +176,7 @@ function renderDoctors(doctors, listId) {
       <p class="muted">Experience: ${doc.experience_years} years</p>
 
       <p class="muted">
-        🕒 Available: ${doc.available_from.slice(0,5)} - ${doc.available_to.slice(0,5)}
+        🕒 Available: ${doc.available_from.slice(0, 5)} - ${doc.available_to.slice(0, 5)}
       </p>
 
       ${doc.bio ? `<p class="muted">${doc.bio}</p>` : ""}
@@ -201,11 +201,11 @@ function populateSpecializations(doctors) {
   const select = qs("filter-special");
   if (!select) return;
 
-  const specs = [...new Set(doctors.map(d => d.specialization))];
+  const specs = [...new Set(doctors.map((d) => d.specialization))];
 
   select.innerHTML = `<option value="">All Specializations</option>`;
 
-  specs.forEach(spec => {
+  specs.forEach((spec) => {
     const option = document.createElement("option");
     option.value = spec.toLowerCase();
     option.textContent = spec;
@@ -226,15 +226,16 @@ function applyFilters() {
   const specValue = specializationFilter?.value.toLowerCase() || "";
 
   if (searchValue) {
-    filtered = filtered.filter(doc =>
-      doc.user.username.toLowerCase().includes(searchValue) ||
-      doc.specialization.toLowerCase().includes(searchValue)
+    filtered = filtered.filter(
+      (doc) =>
+        doc.user.username.toLowerCase().includes(searchValue) ||
+        doc.specialization.toLowerCase().includes(searchValue)
     );
   }
 
   if (specValue) {
-    filtered = filtered.filter(doc =>
-      doc.specialization.toLowerCase() === specValue
+    filtered = filtered.filter(
+      (doc) => doc.specialization.toLowerCase() === specValue
     );
   }
 
@@ -254,8 +255,12 @@ const bookingForm = qs("booking-form");
 function activateBookingButtons() {
   document.querySelectorAll(".open-booking").forEach((btn) => {
     btn.addEventListener("click", () => {
-      if (!token()) return (window.location.href = "/login/");
-      modal.classList.remove("hidden");
+      if (!token()) {
+        window.location.href = "/login/";
+        return;
+      }
+
+      modal?.classList.remove("hidden");
 
       qs("doctor-id-hidden").value = btn.dataset.id;
       qs("doctor-select").value = btn.dataset.id;
@@ -264,7 +269,7 @@ function activateBookingButtons() {
   });
 }
 
-modalClose?.addEventListener("click", () => modal.classList.add("hidden"));
+modalClose?.addEventListener("click", () => modal?.classList.add("hidden"));
 modal?.addEventListener("click", (e) => {
   if (e.target === modal) modal.classList.add("hidden");
 });
@@ -301,7 +306,7 @@ bookingForm?.addEventListener("submit", async (e) => {
 
   if (res.ok) {
     feedback.innerText = "✅ Appointment booked!";
-    setTimeout(() => modal.classList.add("hidden"), 1200);
+    setTimeout(() => modal?.classList.add("hidden"), 1200);
   } else {
     const err = await res.json().catch(() => ({}));
     feedback.innerText =
@@ -333,16 +338,27 @@ async function loadAppointments() {
     const card = document.createElement("div");
     card.className = "doctor-card";
 
+    let statusHtml = "";
+    let actionHtml = "";
+
+    if (ap.status === "pending") {
+      statusHtml = `<p class="muted">Status: Pending</p>`;
+      actionHtml = `<button class="btn cancel" onclick="cancelAppt(${ap.id})">Cancel</button>`;
+    } else if (ap.status === "completed") {
+      statusHtml = `<p class="muted">Status: Completed</p>`;
+    } else if (ap.status === "cancelled") {
+      statusHtml = `<p class="muted">Status: Cancelled</p>`;
+    } else {
+      statusHtml = `<p class="muted">Status: ${ap.status}</p>`;
+    }
+
     card.innerHTML = `
       <h3>Dr. ${ap.doctor?.user?.username}</h3>
       <p class="muted">${ap.doctor?.specialization}</p>
       <p>Date: ${ap.date}</p>
       <p>Time: ${ap.time}</p>
-      ${
-        ap.is_cancelled
-          ? `<p class="muted">Cancelled</p>`
-          : `<button class="btn cancel" onclick="cancelAppt(${ap.id})">Cancel</button>`
-      }
+      ${statusHtml}
+      ${actionHtml}
     `;
 
     container.appendChild(card);
